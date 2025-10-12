@@ -1,0 +1,95 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model WorkSpace {
+    id          String   @id @default(uuid())
+    name        String
+    color       String?
+    updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
+
+    tasks      Task[]
+    timelines  Timeline[]
+    events     Event[]
+    notes      Note[]
+
+    @@map("workspaces")
+}
+
+model Task {
+    id          String   @id @default(uuid())
+    workspaceId String   @map("workspace_id")
+    title       String
+    description String?
+    status      String @default("pending")
+    priority    String    @default("medium")
+    dueDate     DateTime? @map("due_date")
+    updatedAt   DateTime  @default(now()) @updatedAt @map("updated_at")
+
+    workspace WorkSpace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+    @@map("tasks")
+}
+
+model Timeline {
+    id     String   @id @default(uuid())
+    workspaceId String   @map("workspace_id")
+    title  String
+    description String?
+    startDate DateTime @map("start_date")
+    endDate   DateTime @map("end_date")
+    color     String?
+    updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+    workspace WorkSpace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    @@map("timelines")
+}
+
+model Event {
+    id     String   @id @default(uuid())
+    workspaceId String   @map("workspace_id")
+    title  String
+    description String?
+    eventDate DateTime @map("event_date")
+    location  String?
+    updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+    workspace WorkSpace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    @@map("events")
+}
+
+model Note {
+    id    String    @id  @default(uuid())
+    workspaceId String   @map("workspace_id")
+    title String
+    content String?
+    tags  String[]  @default([])
+    updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+    workspace WorkSpace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    @@map("notes")
+}
+
+
+model CentralTimeline {
+    id        String  @id @default(uuid())
+    timelineId String  @map("timeline_id") @unique
+    workspaceId String  @map("workspace_id")
+    workspaceName String @map("workspace_name")
+    workspaceColor String? @map("workspace_color")
+    title     String
+    description String?
+    startDate DateTime @map("start_date")
+    endDate   DateTime @map("end_date")
+    color     String?
+    updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+    @@index([startDate,endDate])
+    @@index([workspaceId])
+    @@map("central_timelines")
+}
