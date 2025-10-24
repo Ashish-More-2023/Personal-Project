@@ -5,7 +5,7 @@ import { validateNote } from '../middlewares/validate.middleware.js';
 
 const router = express.Router();
 
-// router.use(authenticate);
+router.use(authenticate);
 
 router.get('/', noteController.getAllNotes);
 router.get('/:id', noteController.getNoteById);

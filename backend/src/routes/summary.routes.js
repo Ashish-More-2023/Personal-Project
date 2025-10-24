@@ -5,7 +5,7 @@ import { successResponse, errorResponse } from '../utils/response.util.js';
 
 const router = express.Router();
 
-// router.use(authenticate);
+router.use(authenticate);
 
 router.get('/daily', async (req, res) => {
   try {

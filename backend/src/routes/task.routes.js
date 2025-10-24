@@ -5,7 +5,7 @@ import { validateTask } from '../middlewares/validate.middleware.js';
 
 const router = express.Router();
 
-// router.use(authenticate);
+router.use(authenticate);
 
 router.get('/', taskController.getAllTasks);
 router.get('/:id', taskController.getTaskById);
