@@ -1,31 +1,44 @@
-import { Rocket } from 'lucide-react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AuthProvider } from './context/AuthContext';
+import { WorkspaceProvider } from './context/WorkspaceContext';
+import Toast from './components/common/Toast';
+import ProtectedRoute from './components/common/ProtectedRoute';
+import LoginPage from './pages/LoginPage';
+import DashboardPage from './pages/DashboardPage';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
 
 function App() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center p-4">
-      <div className="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full">
-        <div className="flex items-center justify-center mb-6">
-          <Rocket className="w-16 h-16 text-blue-500" />
-        </div>
-        <h1 className="text-4xl font-bold text-gray-800 mb-4 text-center">
-          Timeline Tracker
-        </h1>
-        <div className="space-y-2 text-center">
-          <p className="text-gray-600 flex items-center justify-center gap-2">
-            ✅ React is working
-          </p>
-          <p className="text-gray-600 flex items-center justify-center gap-2">
-            ✅ Tailwind CSS working
-          </p>
-          <p className="text-gray-600 flex items-center justify-center gap-2">
-            ✅ Lucide Icons working
-          </p>
-        </div>
-        <button className="mt-6 w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors">
-          Let's Build! 🚀
-        </button>
-      </div>
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <WorkspaceProvider>
+          <Router>
+            <Toast />
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <DashboardPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            </Routes>
+          </Router>
+        </WorkspaceProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 
