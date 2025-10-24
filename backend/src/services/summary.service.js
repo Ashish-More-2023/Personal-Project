@@ -5,7 +5,7 @@ export const getDailySummary = async (date = new Date()) => {
     const startOfDay = new Date(targetDate.setHours(0, 0, 0, 0));
     const endOfDay = new Date(targetDate.setHours(23, 59, 59, 999));
 
-    const workspaces = await prisma.workspace.findMany({
+    const workspaces = await prisma.workSpace.findMany({
         include:{
             tasks:{
                 where:{

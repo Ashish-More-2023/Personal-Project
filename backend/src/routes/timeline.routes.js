@@ -5,7 +5,7 @@ import { validateTimeline } from '../middlewares/validate.middleware.js';
 
 const router = express.Router();
 
-router.use(authenticate);
+// router.use(authenticate);
 
 router.get('/', timelineController.getAllTimelines);
 router.get('/clashes', timelineController.checkClashes);

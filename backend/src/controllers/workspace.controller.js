@@ -28,7 +28,9 @@ export const getWorkspaceById = async (req, res) => {
 export const createWorkspace = async (req, res) => {
   try {
     const { name, color } = req.body;
+    console.log('Creating workspace with Name:', name, 'Color:', color);
     const workspace = await workspaceService.createWorkspace({ name, color });
+    console.log('Created workspace:', workspace);
     return successResponse(res, 201, 'Workspace created successfully.', workspace);
   } catch (error) {
     return errorResponse(res, 500, 'Failed to create workspace.', error.message);

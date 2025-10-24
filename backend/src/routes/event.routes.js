@@ -5,7 +5,7 @@ import { validateEvent } from '../middlewares/validate.middleware.js';
 
 const router = express.Router();
 
-router.use(authenticate);
+// router.use(authenticate);
 
 router.get('/', eventController.getAllEvents);
 router.get('/:id', eventController.getEventById);

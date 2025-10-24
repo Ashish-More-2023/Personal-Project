@@ -5,6 +5,8 @@ import { successResponse, errorResponse } from '../utils/response.util.js';
 export const login = async (req, res) => {
   try {
     const { id, password } = req.body;
+    console.log('Login attempt with ID:', id);
+    console.log('Login attempt with Password:', password ? '******' : 'No Password Provided');
 
     if (!id || !password) {
       return errorResponse(res, 400, 'ID and password are required.');

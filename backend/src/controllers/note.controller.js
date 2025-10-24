@@ -4,6 +4,7 @@ import { successResponse, errorResponse } from '../utils/response.util.js';
 export const getAllNotes = async (req, res) => {
   try {
     const { workspaceId } = req.query;
+    console.log('Fetching notes for Workspace ID:', workspaceId);
     const notes = await noteService.getAllNotes(workspaceId);
     return successResponse(res, 200, 'Notes retrieved successfully.', notes);
   } catch (error) {
