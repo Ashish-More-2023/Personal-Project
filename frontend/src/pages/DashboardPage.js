@@ -1,8 +1,14 @@
-import Layout from '../components/layout/Layout';
-import Card from '../components/common/Card';
+import { useState } from 'react';
 import { LayoutDashboard } from 'lucide-react';
+import Layout from '../components/layout/Layout';
+import DailySummary from '../components/dashboard/DailySummary';
+import QuickActions from '../components/dashboard/QuickActions';
+import RecentActivity from '../components/dashboard/RecentActivity';
+import CreateWorkspaceModal from '../components/workspace/CreateWorkspaceModal';
 
 const DashboardPage = () => {
+  const [showCreateModal, setShowCreateModal] = useState(false);
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -11,17 +17,24 @@ const DashboardPage = () => {
           <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
         </div>
 
-        <Card>
-          <div className="text-center py-12">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-2">
-              Welcome to Timeline Tracker!
-            </h2>
-            <p className="text-gray-600">
-              Your dashboard is being built. Stay tuned!
-            </p>
+        <QuickActions onCreateWorkspace={() => setShowCreateModal(true)} />
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <DailySummary />
           </div>
-        </Card>
+
+          <div className="lg:col-span-1">
+            <RecentActivity />
+          </div>
+        </div>
       </div>
+
+
+      <CreateWorkspaceModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+      />
     </Layout>
   );
 };
