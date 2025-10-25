@@ -10,6 +10,8 @@ import Card from '../components/common/Card';
 import Button from '../components/common/Button';
 import Loading from '../components/common/Loading';
 import TimelineList from '../components/timeline/TimelineList';
+import EventList from '../components/event/EventList';
+import NoteList from '../components/note/NoteList';
 
 const WorkspaceDetailPage = () => {
   const { id } = useParams();
@@ -77,8 +79,8 @@ const WorkspaceDetailPage = () => {
           <div className="p-6">
   {activeTab === 'tasks' && <TaskList workspaceId={id} />}
   {activeTab === 'timelines' && <TimelineList workspaceId={id} />}
-  {activeTab === 'events' && <p className="text-gray-600">Events coming soon...</p>}
-  {activeTab === 'notes' && <p className="text-gray-600">Notes coming soon...</p>}
+  {activeTab === 'events' && <EventList workspaceId={id} />}
+  {activeTab === 'notes' && <NoteList workspaceId={id} />}
 </div>
         </Card>
       </div>
