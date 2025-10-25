@@ -23,7 +23,7 @@ const Header = ({ toggleSidebar }) => {
         >
           <Menu className="w-6 h-6 text-gray-600" />
         </button>
-        <h1 className="text-xl font-bold text-gray-800">Timeline Tracker</h1>
+        <h1 className="text-xl font-bold text-gray-800">Smart Timeline</h1>
       </div>
 
       {/* Right Section */}
