@@ -1,4 +1,5 @@
 import * as timelineService from '../services/timeline.service.js';
+import { emailService } from '../services/emailService.js';
 import { successResponse, errorResponse } from '../utils/response.util.js';
 
 export const getAllTimelines = async (req, res) => {
@@ -31,8 +32,13 @@ export const createTimeline = async (req, res) => {
     const timelineData = req.body;
     const result = await timelineService.createTimeline(timelineData);
 
+    // Send email notification if clashes detected
     if (result.clashes && result.clashes.length > 0) {
-      return successResponse(res, 201, 'Timeline created with clash warnings.', result);
+      // Fire and forget - don't wait for email
+      emailService.sendClashAlert(result.timeline, result.clashes)
+        .catch(err => console.error('Email notification failed:', err));
+
+      return successResponse(res, 201, 'Timeline created with clash warnings. Email notification sent.', result);
     }
 
     return successResponse(res, 201, 'Timeline created successfully.', result);
@@ -47,8 +53,13 @@ export const updateTimeline = async (req, res) => {
     const timelineData = req.body;
     const result = await timelineService.updateTimeline(id, timelineData);
 
+    // Send email notification if clashes detected
     if (result.clashes && result.clashes.length > 0) {
-      return successResponse(res, 200, 'Timeline updated with clash warnings.', result);
+      // Fire and forget - don't wait for email
+      emailService.sendClashAlert(result.timeline, result.clashes)
+        .catch(err => console.error('Email notification failed:', err));
+
+      return successResponse(res, 200, 'Timeline updated with clash warnings. Email notification sent.', result);
     }
 
     return successResponse(res, 200, 'Timeline updated successfully.', result);
