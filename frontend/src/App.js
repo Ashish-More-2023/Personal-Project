@@ -7,6 +7,8 @@ import ProtectedRoute from './components/common/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import WorkspacesPage from './pages/WorkspacesPage';
+import WorkspaceDetailPage from './pages/WorkspaceDetailPage';
+
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,25 +27,34 @@ function App() {
           <Router>
             <Toast />
             <Routes>
-              <Route path="/login" element={<LoginPage />} />
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <DashboardPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/workspaces"
-                element={
-                  <ProtectedRoute>
-                    <WorkspacesPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            </Routes>
+  <Route path="/login" element={<LoginPage />} />
+  <Route
+    path="/dashboard"
+    element={
+      <ProtectedRoute>
+        <DashboardPage />
+      </ProtectedRoute>
+    }
+  />
+  <Route
+    path="/workspaces"
+    element={
+      <ProtectedRoute>
+        <WorkspacesPage />
+      </ProtectedRoute>
+    }
+  />
+  <Route
+    path="/workspace/:id"
+    element={
+      <ProtectedRoute>
+        <WorkspaceDetailPage />
+      </ProtectedRoute>
+    }
+  />
+  <Route path="/" element={<Navigate to="/dashboard" replace />} />
+</Routes>
+
           </Router>
         </WorkspaceProvider>
       </AuthProvider>
