@@ -1,33 +1,29 @@
-import axiosInstance from '../api/axiosConfig.js';
+import { createContext, useState, useContext } from 'react';
 
-export const workspaceService = {
-  getAll: async () => {
-    const response = await axiosInstance.get('/workspaces');
-    return response.data;
-  },
+const WorkspaceContext = createContext(null);
 
-  getById: async (id) => {
-    const response = await axiosInstance.get(`/workspaces/${id}`);
-    return response.data;
-  },
+export const WorkspaceProvider = ({ children }) => {
+  const [selectedWorkspace, setSelectedWorkspace] = useState(null);
+  const [workspaces, setWorkspaces] = useState([]);
 
-  getStats: async (id) => {
-    const response = await axiosInstance.get(`/workspaces/${id}/stats`);
-    return response.data;
-  },
+  const value = {
+    selectedWorkspace,
+    setSelectedWorkspace,
+    workspaces,
+    setWorkspaces,
+  };
 
-  create: async (data) => {
-    const response = await axiosInstance.post('/workspaces', data);
-    return response.data;
-  },
+  return (
+    <WorkspaceContext.Provider value={value}>
+      {children}
+    </WorkspaceContext.Provider>
+  );
+};
 
-  update: async (id, data) => {
-    const response = await axiosInstance.put(`/workspaces/${id}`, data);
-    return response.data;
-  },
-
-  delete: async (id) => {
-    const response = await axiosInstance.delete(`/workspaces/${id}`);
-    return response.data;
-  },
+export const useWorkspace = () => {
+  const context = useContext(WorkspaceContext);
+  if (!context) {
+    throw new Error('useWorkspace must be used within WorkspaceProvider');
+  }
+  return context;
 };

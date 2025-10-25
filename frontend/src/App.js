@@ -1,11 +1,12 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './context/AuthContext';
-import { workspaceService } from './context/WorkspaceContext.js';
+import { WorkspaceProvider } from './context/WorkspaceContext';
 import Toast from './components/common/Toast';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
+import WorkspacesPage from './pages/WorkspacesPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -20,7 +21,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <workspaceService>
+        <WorkspaceProvider>
           <Router>
             <Toast />
             <Routes>
@@ -33,10 +34,18 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="/workspaces"
+                element={
+                  <ProtectedRoute>
+                    <WorkspacesPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
             </Routes>
           </Router>
-        </workspaceService>
+        </WorkspaceProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
