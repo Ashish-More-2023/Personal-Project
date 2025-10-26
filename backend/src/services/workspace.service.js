@@ -1,13 +1,13 @@
 import prisma from '../config/database.js';
 
 export const getAllWorkspaces = async () => {
-  return await prisma.workSpace.findMany({
+  return await prisma.workspace.findMany({
     orderBy: { updatedAt: 'desc' },
   });
 };
 
 export const getWorkspaceById = async (id) => {
-  return await prisma.workSpace.findUnique({
+  return await prisma.workspace.findUnique({
     where: { id },
     include: {
       tasks: true,
@@ -19,7 +19,7 @@ export const getWorkspaceById = async (id) => {
 };
 
 export const createWorkspace = async (data) => {
-  return await prisma.workSpace.create({
+  return await prisma.workspace.create({
     data: {
       name: data.name,
       color: data.color || null,
@@ -28,7 +28,7 @@ export const createWorkspace = async (data) => {
 };
 
 export const updateWorkspace = async (id, data) => {
-  return await prisma.workSpace.update({
+  return await prisma.workspace.update({
     where: { id },
     data: {
       name: data.name,
@@ -42,13 +42,13 @@ export const deleteWorkspace = async (id) => {
     where: { workspaceId: id },
   });
 
-  return await prisma.workSpace.delete({
+  return await prisma.workspace.delete({
     where: { id },
   });
 };
 
 export const getWorkspaceStats = async (id) => {
-  const workspace = await prisma.workSpace.findUnique({
+  const workspace = await prisma.workspace.findUnique({
     where: { id },
     include: {
       tasks: {

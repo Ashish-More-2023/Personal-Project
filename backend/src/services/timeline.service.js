@@ -27,7 +27,7 @@ export const getTimelineById = async (id)=>{
 };
 
 export const createTimeline = async (data)=>{
-    const workspace = await prisma.workSpace.findUnique({
+    const workspace = await prisma.workspace.findUnique({
         where:{id:data.workspaceId},
     });
 
