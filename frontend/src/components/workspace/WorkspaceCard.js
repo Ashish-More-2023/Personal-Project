@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
-import { MoreVertical, Edit2, Trash2, BarChart3 } from 'lucide-react';
+import { MoreVertical, Edit2, Trash2, Palette, Calendar } from 'lucide-react';
 import { useState } from 'react';
 import Card from '../common/Card';
-import clsx from 'clsx';
+import { formatRelativeTime } from '../../utils/helpers';
 
 const WorkspaceCard = ({ workspace, onEdit, onDelete }) => {
   const navigate = useNavigate();
@@ -78,18 +78,25 @@ const WorkspaceCard = ({ workspace, onEdit, onDelete }) => {
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-gray-100">
-          <div>
-            <p className="text-sm text-gray-500">Tasks</p>
-            <p className="text-2xl font-bold text-gray-800">
-              {workspace._count?.tasks || 0}
-            </p>
+        {/* Info */}
+        <div className="space-y-3 mt-4 pt-4 border-t border-gray-100">
+          <div className="flex items-center gap-2">
+            <Palette className="w-4 h-4 text-gray-500" />
+            <div className="flex items-center gap-2">
+              <div
+                className="w-6 h-6 rounded-full border-2 border-white shadow"
+                style={{ backgroundColor: workspace.color }}
+              />
+              <p className="text-sm text-gray-600">
+                {workspace.color}
+              </p>
+            </div>
           </div>
-          <div>
-            <p className="text-sm text-gray-500">Timelines</p>
-            <p className="text-2xl font-bold text-gray-800">
-              {workspace._count?.timelines || 0}
+          
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-gray-500" />
+            <p className="text-sm text-gray-600">
+              Updated {formatRelativeTime(workspace.updatedAt)}
             </p>
           </div>
         </div>
