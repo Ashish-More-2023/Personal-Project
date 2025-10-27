@@ -24,6 +24,7 @@ const WorkspaceDetailPage = () => {
   });
 
   const workspace = data?.data;
+  console.log(workspace);
 
   if (isLoading) return <Layout><Loading fullScreen /></Layout>;
 
@@ -56,19 +57,19 @@ const WorkspaceDetailPage = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Card>
             <p className="text-sm text-gray-600">Tasks</p>
-            <p className="text-2xl font-bold text-gray-800">{workspace?._count?.tasks || 0}</p>
+            <p className="text-2xl font-bold text-gray-800">{workspace.tasks.length || 0}</p>
           </Card>
           <Card>
             <p className="text-sm text-gray-600">Timelines</p>
-            <p className="text-2xl font-bold text-gray-800">{workspace?._count?.timelines || 0}</p>
+            <p className="text-2xl font-bold text-gray-800">{workspace.timelines.length || 0}</p>
           </Card>
           <Card>
             <p className="text-sm text-gray-600">Events</p>
-            <p className="text-2xl font-bold text-gray-800">{workspace?._count?.events || 0}</p>
+            <p className="text-2xl font-bold text-gray-800">{workspace.events.length || 0}</p>
           </Card>
           <Card>
             <p className="text-sm text-gray-600">Notes</p>
-            <p className="text-2xl font-bold text-gray-800">{workspace?._count?.notes || 0}</p>
+            <p className="text-2xl font-bold text-gray-800">{workspace.notes.length || 0}</p>
           </Card>
         </div>
 
