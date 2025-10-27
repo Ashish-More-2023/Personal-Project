@@ -6,6 +6,8 @@ import { workspaceService } from '../api/workspaceService';
 import Layout from '../components/layout/Layout';
 import TaskCard from '../components/task/TaskCard';
 import CreateTaskModal from '../components/task/CreateTaskModal';
+import EditTaskModal from '../components/task/EditTaskModal';
+import DeleteTaskModal from '../components/task/DeleteTaskModal';
 import Select from '../components/common/Select';
 import Button from '../components/common/Button';
 import Loading from '../components/common/Loading';
@@ -13,7 +15,10 @@ import EmptyState from '../components/common/EmptyState';
 
 const TasksPage = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedWorkspace, setSelectedWorkspace] = useState('');
+  const [selectedTask, setSelectedTask] = useState(null);
 
   const { data: workspacesData } = useQuery({
     queryKey: ['workspaces'],
@@ -33,6 +38,26 @@ const TasksPage = () => {
     ...workspaces.map((ws) => ({ value: ws.id, label: ws.name })),
   ];
 
+  const handleEdit = (task) => {
+    setSelectedTask(task);
+    setShowEditModal(true);
+  };
+
+  const handleDelete = (task) => {
+    setSelectedTask(task);
+    setShowDeleteModal(true);
+  };
+
+  const handleCloseEdit = () => {
+    setShowEditModal(false);
+    setSelectedTask(null);
+  };
+
+  const handleCloseDelete = () => {
+    setShowDeleteModal(false);
+    setSelectedTask(null);
+  };
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -46,6 +71,7 @@ const TasksPage = () => {
             variant="primary"
             onClick={() => setShowCreateModal(true)}
             className="flex items-center gap-2"
+            disabled={!selectedWorkspace}
           >
             <Plus className="w-5 h-5" />
             New Task
@@ -71,9 +97,9 @@ const TasksPage = () => {
           <EmptyState
             icon={CheckSquare}
             title="No tasks found"
-            message="Create your first task or select a different workspace."
-            action={() => setShowCreateModal(true)}
-            actionLabel="Create Task"
+            message={selectedWorkspace ? "Create your first task in this workspace." : "Select a workspace to view tasks or create a new one."}
+            action={selectedWorkspace ? () => setShowCreateModal(true) : undefined}
+            actionLabel={selectedWorkspace ? "Create Task" : undefined}
           />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -81,19 +107,39 @@ const TasksPage = () => {
               <TaskCard
                 key={task.id}
                 task={task}
-                onEdit={() => {}}
-                onDelete={() => {}}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
               />
             ))}
           </div>
         )}
       </div>
 
+      {/* Create Modal */}
       {selectedWorkspace && (
         <CreateTaskModal
           isOpen={showCreateModal}
           onClose={() => setShowCreateModal(false)}
           workspaceId={selectedWorkspace}
+        />
+      )}
+
+      {/* Edit Modal */}
+      {selectedTask && (
+        <EditTaskModal
+          isOpen={showEditModal}
+          onClose={handleCloseEdit}
+          task={selectedTask}
+          workspaceId={selectedTask.workspaceId}
+        />
+      )}
+
+      {/* Delete Modal */}
+      {selectedTask && (
+        <DeleteTaskModal
+          isOpen={showDeleteModal}
+          onClose={handleCloseDelete}
+          task={selectedTask}
         />
       )}
     </Layout>

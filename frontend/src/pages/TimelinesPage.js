@@ -6,6 +6,8 @@ import { workspaceService } from '../api/workspaceService';
 import Layout from '../components/layout/Layout';
 import TimelineCard from '../components/timeline/TimelineCard';
 import CreateTimelineModal from '../components/timeline/CreateTimelineModal';
+import EditTimelineModal from '../components/timeline/EditTimelineModal';
+import DeleteTimelineModal from '../components/timeline/DeleteTimelineModal';
 import Select from '../components/common/Select';
 import Button from '../components/common/Button';
 import Loading from '../components/common/Loading';
@@ -13,7 +15,10 @@ import EmptyState from '../components/common/EmptyState';
 
 const TimelinesPage = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedWorkspace, setSelectedWorkspace] = useState('');
+  const [selectedTimeline, setSelectedTimeline] = useState(null);
 
   const { data: workspacesData } = useQuery({
     queryKey: ['workspaces'],
@@ -33,6 +38,26 @@ const TimelinesPage = () => {
     ...workspaces.map((ws) => ({ value: ws.id, label: ws.name })),
   ];
 
+  const handleEdit = (timeline) => {
+    setSelectedTimeline(timeline);
+    setShowEditModal(true);
+  };
+
+  const handleDelete = (timeline) => {
+    setSelectedTimeline(timeline);
+    setShowDeleteModal(true);
+  };
+
+  const handleCloseEdit = () => {
+    setShowEditModal(false);
+    setSelectedTimeline(null);
+  };
+
+  const handleCloseDelete = () => {
+    setShowDeleteModal(false);
+    setSelectedTimeline(null);
+  };
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -46,6 +71,7 @@ const TimelinesPage = () => {
             variant="primary"
             onClick={() => setShowCreateModal(true)}
             className="flex items-center gap-2"
+            disabled={!selectedWorkspace}
           >
             <Plus className="w-5 h-5" />
             New Timeline
@@ -71,9 +97,9 @@ const TimelinesPage = () => {
           <EmptyState
             icon={Clock}
             title="No timelines found"
-            message="Create your first timeline or select a different workspace."
-            action={() => setShowCreateModal(true)}
-            actionLabel="Create Timeline"
+            message={selectedWorkspace ? "Create your first timeline in this workspace." : "Select a workspace to view timelines or create a new one."}
+            action={selectedWorkspace ? () => setShowCreateModal(true) : undefined}
+            actionLabel={selectedWorkspace ? "Create Timeline" : undefined}
           />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -82,19 +108,39 @@ const TimelinesPage = () => {
                 key={timeline.id}
                 timeline={timeline}
                 clashes={[]}
-                onEdit={() => {}}
-                onDelete={() => {}}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
               />
             ))}
           </div>
         )}
       </div>
 
+      {/* Create Modal */}
       {selectedWorkspace && (
         <CreateTimelineModal
           isOpen={showCreateModal}
           onClose={() => setShowCreateModal(false)}
           workspaceId={selectedWorkspace}
+        />
+      )}
+
+      {/* Edit Modal */}
+      {selectedTimeline && (
+        <EditTimelineModal
+          isOpen={showEditModal}
+          onClose={handleCloseEdit}
+          timeline={selectedTimeline}
+          workspaceId={selectedTimeline.workspaceId}
+        />
+      )}
+
+      {/* Delete Modal */}
+      {selectedTimeline && (
+        <DeleteTimelineModal
+          isOpen={showDeleteModal}
+          onClose={handleCloseDelete}
+          timeline={selectedTimeline}
         />
       )}
     </Layout>

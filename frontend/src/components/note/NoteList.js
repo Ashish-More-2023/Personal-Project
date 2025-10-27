@@ -4,12 +4,17 @@ import { Plus, StickyNote } from 'lucide-react';
 import { noteService } from '../../api/noteService';
 import NoteCard from './NoteCard';
 import CreateNoteModal from './CreateNoteModal';
+import EditNoteModal from './EditNoteModal';
+import DeleteNoteModal from './DeleteNoteModal';
 import Button from '../common/Button';
 import Loading from '../common/Loading';
 import EmptyState from '../common/EmptyState';
 
 const NoteList = ({ workspaceId }) => {
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedNote, setSelectedNote] = useState(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ['notes', workspaceId],
@@ -17,6 +22,16 @@ const NoteList = ({ workspaceId }) => {
   });
 
   const notes = data?.data || [];
+
+  const handleEdit = (note) => {
+    setSelectedNote(note);
+    setShowEditModal(true);
+  };
+
+  const handleDelete = (note) => {
+    setSelectedNote(note);
+    setShowDeleteModal(true);
+  };
 
   if (isLoading) return <Loading />;
 
@@ -51,8 +66,8 @@ const NoteList = ({ workspaceId }) => {
             <NoteCard
               key={note.id}
               note={note}
-              onEdit={() => {}}
-              onDelete={() => {}}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
             />
           ))}
         </div>
@@ -63,6 +78,29 @@ const NoteList = ({ workspaceId }) => {
         onClose={() => setShowCreateModal(false)}
         workspaceId={workspaceId}
       />
+
+      {selectedNote && (
+        <EditNoteModal
+          isOpen={showEditModal}
+          onClose={() => {
+            setShowEditModal(false);
+            setSelectedNote(null);
+          }}
+          note={selectedNote}
+          workspaceId={workspaceId}
+        />
+      )}
+
+      {selectedNote && (
+        <DeleteNoteModal
+          isOpen={showDeleteModal}
+          onClose={() => {
+            setShowDeleteModal(false);
+            setSelectedNote(null);
+          }}
+          note={selectedNote}
+        />
+      )}
     </div>
   );
 };

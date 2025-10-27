@@ -6,6 +6,8 @@ import { workspaceService } from '../api/workspaceService';
 import Layout from '../components/layout/Layout';
 import NoteCard from '../components/note/NoteCard';
 import CreateNoteModal from '../components/note/CreateNoteModal';
+import EditNoteModal from '../components/note/EditNoteModal';
+import DeleteNoteModal from '../components/note/DeleteNoteModal';
 import Select from '../components/common/Select';
 import Button from '../components/common/Button';
 import Loading from '../components/common/Loading';
@@ -13,7 +15,10 @@ import EmptyState from '../components/common/EmptyState';
 
 const NotesPage = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedWorkspace, setSelectedWorkspace] = useState('');
+  const [selectedNote, setSelectedNote] = useState(null);
 
   const { data: workspacesData } = useQuery({
     queryKey: ['workspaces'],
@@ -33,6 +38,26 @@ const NotesPage = () => {
     ...workspaces.map((ws) => ({ value: ws.id, label: ws.name })),
   ];
 
+  const handleEdit = (note) => {
+    setSelectedNote(note);
+    setShowEditModal(true);
+  };
+
+  const handleDelete = (note) => {
+    setSelectedNote(note);
+    setShowDeleteModal(true);
+  };
+
+  const handleCloseEdit = () => {
+    setShowEditModal(false);
+    setSelectedNote(null);
+  };
+
+  const handleCloseDelete = () => {
+    setShowDeleteModal(false);
+    setSelectedNote(null);
+  };
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -46,6 +71,7 @@ const NotesPage = () => {
             variant="primary"
             onClick={() => setShowCreateModal(true)}
             className="flex items-center gap-2"
+            disabled={!selectedWorkspace}
           >
             <Plus className="w-5 h-5" />
             New Note
@@ -71,9 +97,9 @@ const NotesPage = () => {
           <EmptyState
             icon={StickyNote}
             title="No notes found"
-            message="Create your first note or select a different workspace."
-            action={() => setShowCreateModal(true)}
-            actionLabel="Create Note"
+            message={selectedWorkspace ? "Create your first note in this workspace." : "Select a workspace to view notes or create a new one."}
+            action={selectedWorkspace ? () => setShowCreateModal(true) : undefined}
+            actionLabel={selectedWorkspace ? "Create Note" : undefined}
           />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -81,19 +107,39 @@ const NotesPage = () => {
               <NoteCard
                 key={note.id}
                 note={note}
-                onEdit={() => {}}
-                onDelete={() => {}}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
               />
             ))}
           </div>
         )}
       </div>
 
+      {/* Create Modal */}
       {selectedWorkspace && (
         <CreateNoteModal
           isOpen={showCreateModal}
           onClose={() => setShowCreateModal(false)}
           workspaceId={selectedWorkspace}
+        />
+      )}
+
+      {/* Edit Modal */}
+      {selectedNote && (
+        <EditNoteModal
+          isOpen={showEditModal}
+          onClose={handleCloseEdit}
+          note={selectedNote}
+          workspaceId={selectedNote.workspaceId}
+        />
+      )}
+
+      {/* Delete Modal */}
+      {selectedNote && (
+        <DeleteNoteModal
+          isOpen={showDeleteModal}
+          onClose={handleCloseDelete}
+          note={selectedNote}
         />
       )}
     </Layout>

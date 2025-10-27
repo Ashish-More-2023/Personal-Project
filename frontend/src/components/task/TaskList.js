@@ -4,12 +4,17 @@ import { Plus } from 'lucide-react';
 import { taskService } from '../../api/taskService';
 import TaskCard from './TaskCard';
 import CreateTaskModal from './CreateTaskModal';
+import EditTaskModal from './EditTaskModal';
+import DeleteTaskModal from './DeleteTaskModal';
 import Button from '../common/Button';
 import Loading from '../common/Loading';
 import EmptyState from '../common/EmptyState';
 
 const TaskList = ({ workspaceId }) => {
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ['tasks', workspaceId],
@@ -17,6 +22,16 @@ const TaskList = ({ workspaceId }) => {
   });
 
   const tasks = data?.data || [];
+
+  const handleEdit = (task) => {
+    setSelectedTask(task);
+    setShowEditModal(true);
+  };
+
+  const handleDelete = (task) => {
+    setSelectedTask(task);
+    setShowDeleteModal(true);
+  };
 
   if (isLoading) return <Loading />;
 
@@ -50,8 +65,8 @@ const TaskList = ({ workspaceId }) => {
             <TaskCard
               key={task.id}
               task={task}
-              onEdit={() => {}}
-              onDelete={() => {}}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
             />
           ))}
         </div>
@@ -62,6 +77,29 @@ const TaskList = ({ workspaceId }) => {
         onClose={() => setShowCreateModal(false)}
         workspaceId={workspaceId}
       />
+
+      {selectedTask && (
+        <EditTaskModal
+          isOpen={showEditModal}
+          onClose={() => {
+            setShowEditModal(false);
+            setSelectedTask(null);
+          }}
+          task={selectedTask}
+          workspaceId={workspaceId}
+        />
+      )}
+
+      {selectedTask && (
+        <DeleteTaskModal
+          isOpen={showDeleteModal}
+          onClose={() => {
+            setShowDeleteModal(false);
+            setSelectedTask(null);
+          }}
+          task={selectedTask}
+        />
+      )}
     </div>
   );
 };

@@ -6,6 +6,8 @@ import { workspaceService } from '../api/workspaceService';
 import Layout from '../components/layout/Layout';
 import EventCard from '../components/event/EventCard';
 import CreateEventModal from '../components/event/CreateEventModal';
+import EditEventModal from '../components/event/EditEventModal';
+import DeleteEventModal from '../components/event/DeleteEventModal';
 import Select from '../components/common/Select';
 import Button from '../components/common/Button';
 import Loading from '../components/common/Loading';
@@ -13,7 +15,10 @@ import EmptyState from '../components/common/EmptyState';
 
 const EventsPage = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedWorkspace, setSelectedWorkspace] = useState('');
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   const { data: workspacesData } = useQuery({
     queryKey: ['workspaces'],
@@ -33,6 +38,26 @@ const EventsPage = () => {
     ...workspaces.map((ws) => ({ value: ws.id, label: ws.name })),
   ];
 
+  const handleEdit = (event) => {
+    setSelectedEvent(event);
+    setShowEditModal(true);
+  };
+
+  const handleDelete = (event) => {
+    setSelectedEvent(event);
+    setShowDeleteModal(true);
+  };
+
+  const handleCloseEdit = () => {
+    setShowEditModal(false);
+    setSelectedEvent(null);
+  };
+
+  const handleCloseDelete = () => {
+    setShowDeleteModal(false);
+    setSelectedEvent(null);
+  };
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -46,6 +71,7 @@ const EventsPage = () => {
             variant="primary"
             onClick={() => setShowCreateModal(true)}
             className="flex items-center gap-2"
+            disabled={!selectedWorkspace}
           >
             <Plus className="w-5 h-5" />
             New Event
@@ -71,9 +97,9 @@ const EventsPage = () => {
           <EmptyState
             icon={Calendar}
             title="No events found"
-            message="Create your first event or select a different workspace."
-            action={() => setShowCreateModal(true)}
-            actionLabel="Create Event"
+            message={selectedWorkspace ? "Create your first event in this workspace." : "Select a workspace to view events or create a new one."}
+            action={selectedWorkspace ? () => setShowCreateModal(true) : undefined}
+            actionLabel={selectedWorkspace ? "Create Event" : undefined}
           />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -81,19 +107,39 @@ const EventsPage = () => {
               <EventCard
                 key={event.id}
                 event={event}
-                onEdit={() => {}}
-                onDelete={() => {}}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
               />
             ))}
           </div>
         )}
       </div>
 
+      {/* Create Modal */}
       {selectedWorkspace && (
         <CreateEventModal
           isOpen={showCreateModal}
           onClose={() => setShowCreateModal(false)}
           workspaceId={selectedWorkspace}
+        />
+      )}
+
+      {/* Edit Modal */}
+      {selectedEvent && (
+        <EditEventModal
+          isOpen={showEditModal}
+          onClose={handleCloseEdit}
+          event={selectedEvent}
+          workspaceId={selectedEvent.workspaceId}
+        />
+      )}
+
+      {/* Delete Modal */}
+      {selectedEvent && (
+        <DeleteEventModal
+          isOpen={showDeleteModal}
+          onClose={handleCloseDelete}
+          event={selectedEvent}
         />
       )}
     </Layout>
